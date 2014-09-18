@@ -23,15 +23,24 @@ window.generateBoards = function(n) {
 
   var recurse = function(row) {
     _.each(firstRows, function(item){
-      sequence.push(item);
-      //debugger;
-      if (sequence.length === n){
-        results.push(sequence.slice());
-      } else {
-        recurse(n);
+      var hasConflict = false;
+      for (var i = 0; i < sequence.length; i++){
+        //console.log(Math.abs(sequence[i].indexOf(1) - item.indexOf(1)));
+        if (sequence[i].indexOf(1) === item.indexOf(1) || Math.abs(sequence[i].indexOf(1) - item.indexOf(1)) === sequence.length - i){
+          return hasConflict = true;
+        }
       }
-      sequence.pop();
-    })
+
+      if (!hasConflict){
+        sequence.push(item);
+        if (sequence.length === n){
+          results.push(sequence.slice());
+        } else {
+          recurse(n);
+        }
+        sequence.pop();
+      }
+    });
   }
   recurse(n);
   return results;
@@ -83,6 +92,7 @@ window.findNQueensSolution = function(n) {
   var solution = undefined; //fixme
   _.each(boards, function(board) {
     boardObj = new Board(board);
+    //console.log(board);
     if (!boardObj.hasAnyQueensConflicts()) {
       solution = boardObj.rows();
     }
