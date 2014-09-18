@@ -21,24 +21,40 @@ window.generateBoards = function(n) {
     firstRows.push(array);
   }
 
+
   var recurse = function(row) {
     _.each(firstRows, function(item){
-      var hasConflict = false;
-      for (var i = 0; i < sequence.length; i++){
-        //console.log(Math.abs(sequence[i].indexOf(1) - item.indexOf(1)));
-        if (sequence[i].indexOf(1) === item.indexOf(1) || Math.abs(sequence[i].indexOf(1) - item.indexOf(1)) === sequence.length - i){
-          return hasConflict = true;
+      if (!(sequence.length === 0 && firstRows.indexOf(item) >= Math.round(firstRows.length/2))) {
+        var hasConflict = false;
+        for (var i = 0; i < sequence.length; i++){
+          //console.log(Math.abs(sequence[i].indexOf(1) - item.indexOf(1)));
+          if (sequence[i].indexOf(1) === item.indexOf(1) || Math.abs(sequence[i].indexOf(1) - item.indexOf(1)) === sequence.length - i){
+            return hasConflict = true;
+          }
         }
-      }
 
-      if (!hasConflict){
-        sequence.push(item);
-        if (sequence.length === n){
-          results.push(sequence.slice());
-        } else {
-          recurse(n);
+        if (!hasConflict){
+          //debugger;
+          sequence.push(item);
+          if (sequence.length === n){
+            results.push(sequence.slice());
+            if ((n % 2 === 0) || (n % 2 !== 0 && sequence[0] !== firstRows[Math.floor(firstRows.length/2)])) {
+              //console.log(item);
+              var mirrorResult = [];
+              for (var i = 0; i < sequence.length; i++) {
+                var mirrorRow = sequence[i].slice();
+                mirrorRow.reverse();
+                mirrorResult.push(mirrorRow);
+
+
+              }
+              results.push(mirrorResult);
+            }
+          } else {
+            recurse(n);
+          }
+          sequence.pop();
         }
-        sequence.pop();
       }
     });
   }
