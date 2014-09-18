@@ -10,10 +10,40 @@
 // (There are also optimizations that will allow you to skip a lot of the dead search space)
 // take a look at solversSpec.js to see what the tests are expecting
 
+window.generateBoards = function(n) {
+  var firstRows = [];
+  var sequence = [];
+  var results = [];
+
+  for (var i = 0; i < n; i++){
+    var array = Array.apply(null, new Array(n)).map(Number.prototype.valueOf,0);
+    array[i] = 1;
+    firstRows.push(array);
+  }
+
+  var recurse = function(row) {
+    _.each(firstRows, function(item){
+      sequence.push(item);
+      //debugger;
+      if (sequence.length === n){
+        results.push(sequence.slice());
+      } else {
+        recurse(n);
+      }
+      sequence.pop();
+    })
+  }
+  recurse(n);
+  return results;
+}
+
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
-
 window.findNRooksSolution = function(n) {
+
+  //If n rooks can be placed on board and there are no conflicts using rowConflict and columnConflict methods
+
+
   var solution = undefined; //fixme
 
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
