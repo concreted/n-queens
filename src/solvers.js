@@ -10,6 +10,58 @@
 // (There are also optimizations that will allow you to skip a lot of the dead search space)
 // take a look at solversSpec.js to see what the tests are expecting
 
+
+
+window.bitQueens = function(n) {
+
+  var count = 0;
+  var right = 0;
+  var column = 0;
+  var left = 0;
+
+  var search(col, rd, ld) {
+    for (var i = 0; i < n; i++) {
+      if ((col | rd | ld).toString.indexOf(0) === i) {
+        rd = col >> 1;
+        if (col << 1 > (1 << n - 1)) {
+          parseInt((ld = col << 1).toString(2).slice(1) + 0, 2);
+        } else {
+         ld = col << 1;
+        }
+        col = col | 1 << (n - 1 - i);
+      }
+      if ((col | rd | ld) < (1 << n) - 1) {
+        search(col, rd, ld);
+      }
+    }
+  }
+
+
+
+
+}
+
+window.nQueens = function(n) {
+  solutions = 0;
+
+  var board = new Board(n);
+
+  // Check index if any conflicts
+  // If conflicts with any other piece, continue
+  // If no conflicts, place it (togglePiece)
+  var place = function(row, column) {
+    if (!board.hasQueenConflictsOn(row,column)) {
+      board.togglePiece(row, column);
+      if ()
+      place(row+1, 0);
+    }
+
+  }
+
+  place(0,0);
+  return solutions;
+}
+
 window.generateBoards = function(n) {
   var firstRows = [];
   var sequence = [];
@@ -27,7 +79,6 @@ window.generateBoards = function(n) {
       if (!(sequence.length === 0 && firstRows.indexOf(item) >= Math.round(firstRows.length/2))) {
         var hasConflict = false;
         for (var i = 0; i < sequence.length; i++){
-          //console.log(Math.abs(sequence[i].indexOf(1) - item.indexOf(1)));
           if (sequence[i].indexOf(1) === item.indexOf(1) || Math.abs(sequence[i].indexOf(1) - item.indexOf(1)) === sequence.length - i){
             return hasConflict = true;
           }
@@ -62,6 +113,9 @@ window.generateBoards = function(n) {
   return results;
 }
 
+// console.time('timing');
+// generateBoards(11);
+// console.timeEnd('timing');
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 window.findNRooksSolution = function(n) {
