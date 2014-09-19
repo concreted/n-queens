@@ -10,56 +10,54 @@
 // (There are also optimizations that will allow you to skip a lot of the dead search space)
 // take a look at solversSpec.js to see what the tests are expecting
 
-
-
-window.bitQueens = function(n) {
-
-  var count = 0;
-  var right = 0;
-  var column = 0;
-  var left = 0;
-
-  var search(col, rd, ld) {
-    for (var i = 0; i < n; i++) {
-      if ((col | rd | ld).toString.indexOf(0) === i) {
-        rd = col >> 1;
-        if (col << 1 > (1 << n - 1)) {
-          parseInt((ld = col << 1).toString(2).slice(1) + 0, 2);
-        } else {
-         ld = col << 1;
-        }
-        col = col | 1 << (n - 1 - i);
-      }
-      if ((col | rd | ld) < (1 << n) - 1) {
-        search(col, rd, ld);
-      }
-    }
-  }
-
-
-
-
+var timeBitQueens = function(n) {
+  console.time('bitQueens in');
+  bitQueens(n);
+  console.timeEnd('bitQueens in');
 }
 
-window.nQueens = function(n) {
-  solutions = 0;
+var bitQueens = function(n) {
+  var count = 0;
 
-  var board = new Board(n);
+  // Row of n ones (i.e. n=3 --> 111)
+  var all = (1 << n) - 1;
+  
+  var placeQueen = function(ld, col, rd) {
+    // If col is filled with n ones, it's a complete solution
+    if (col === all) {
+      count++;
+    } else {
+      // From current ld, col, rd, generate threats 
+      var threats = (ld | col | rd);
+      
+      // The next row's possible queen positions are 
+      // determined by inverting threats and &ing with all.
+      // In initial case, there are no threats:     000
+      // Inverting threats gives:                   111
+      // &ing with all gives:                       111
+      var possible = (~threats) & all;
 
-  // Check index if any conflicts
-  // If conflicts with any other piece, continue
-  // If no conflicts, place it (togglePiece)
-  var place = function(row, column) {
-    if (!board.hasQueenConflictsOn(row,column)) {
-      board.togglePiece(row, column);
-      if ()
-      place(row+1, 0);
+      // Loop through while there are any possible
+      // queen positions available.
+      while(possible) {
+        // Get the next available queen position by bit.
+        var bit = possible & -possible;
+
+        // Remove that possibility from the possible positions.
+        possible -= bit;
+
+        // Calculate next row's left diagonal threats,
+        // next row's right diagonal threats,
+        // and next row's column threats.
+        // Recurse on that new threat. 
+        placeQueen( (ld|bit)<<1, col|bit, (rd|bit)>>1 );
+      }
     }
-
   }
 
-  place(0,0);
-  return solutions;
+  placeQueen(0, 0, 0);
+
+  return count;
 }
 
 window.generateBoards = function(n) {
