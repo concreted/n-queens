@@ -44,8 +44,8 @@ var bitQueens = function(n) {
         var bit = possible & -possible;
 
         // Remove that possibility from the possible positions.
+        //possible = possible ^ bit;
         possible -= bit;
-
         // Calculate next row's left diagonal threats,
         // next row's right diagonal threats,
         // and next row's column threats.
